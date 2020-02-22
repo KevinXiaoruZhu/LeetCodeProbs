@@ -34,3 +34,6 @@
 /CMakeFiles/
 *.txt
 .idea
+
+# Test File
+test.cpp
