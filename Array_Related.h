@@ -790,8 +790,9 @@ public:
     // #34
     // O(logN) time binary search target number range (return {left_idx, right_idx})
     static vector<int> searchRange(vector<int>& nums, int target) {
+        if (nums.empty()) return {-1, -1};
         int fisrt_target_idx = first_greater_equal(nums, target);
-        if(nums[fisrt_target_idx] != target || fisrt_target_idx == (int)nums.size()){
+        if(fisrt_target_idx == (int)nums.size() || nums[fisrt_target_idx] != target ){ // the sequence is important.
             return {-1, -1};
         }else{
             return {fisrt_target_idx, first_greater_equal(nums, target + 1) - 1};
@@ -807,6 +808,84 @@ public:
         }
         return right;
     }
+
+    // #36
+    // Determine if a 9x9 Sudoku board is valid
+    static bool isValidSudoku(vector<vector<char>>& board) {
+        // bool** cell_flag_ptr = new bool*[9];
+        // for(int i = 0; i < 9; ++i) cell_flag_ptr[i] = new bool[9];
+        vector<vector<bool>> cell_flag(9, vector<bool>(9, false));
+        vector<vector<bool>> row_flag(9, vector<bool>(9, false));
+        vector<vector<bool>> clm_flag(9, vector<bool>(9, false));
+
+        for(int i = 0; i < 9; ++i)
+            for(int j = 0; j < 9; ++j){
+                if(board[i][j] == '.') continue;
+                else{
+                    int value = board[i][j] - '1'; // 1-9 ==> 0-8 idx
+                    if(cell_flag[3 * (i / 3) + (j / 3)][value] || row_flag[i][value] || clm_flag[j][value] ) return false;
+                    cell_flag[3 * (i / 3) + (j / 3)][value] = true;
+                    row_flag[i][value] = true;
+                    clm_flag[j][value] = true;
+                }
+            }
+        return true;
+    }
+
+    // #37
+    // solution for Sudoku
+    static void solveSudoku(vector<vector<char>>& board) {
+        helper(board, 0, 0);
+    }
+    static bool helper(vector<vector<char>>& board, int i, int j) {
+        if(i == 9) return true;
+        if(j == 9) return helper(board, i + 1, 0);
+        if(board[i][j] != '.') return helper(board, i, j + 1);
+        for(char ch = '1'; ch <= '9'; ++ch){
+            if(!is_valid(board, i, j, ch)) continue;
+            board[i][j] = ch;
+            if(helper(board, i, j + 1)) return true;
+            board[i][j] = '.';
+        }
+        return false;
+
+    }
+    static bool is_valid(vector<vector<char>>& board, int i, int j, char val) {
+        for (int x = 0; x < 9; ++x) {
+            if (board[x][j] == val) return false;
+        }
+        for (int y = 0; y < 9; ++y) {
+            if (board[i][y] == val) return false;
+        }
+        int row = i - i % 3, col = j - j % 3;
+        for (int x = 0; x < 3; ++x) {
+            for (int y = 0; y < 3; ++y) {
+                if (board[x + row][y + col] == val) return false;
+            }
+        }
+        return true;
+    }
+
+    // #39
+    // Combination Sum
+    static vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> rst;
+        vector<int> tmp_vec;
+        dfs_comb_sum(candidates, target, 0, tmp_vec, rst);
+        return rst;
+    }
+
+    static void dfs_comb_sum(vector<int>& candidates, int target, int start, vector<int>& tmp_vec, vector<vector<int>>& rst){
+        if(target < 0) return;
+        if(target == 0) {rst.push_back(tmp_vec); return;}
+
+        for(int i = start; i < (int)candidates.size(); ++i){
+            tmp_vec.push_back(candidates[i]);
+            dfs_comb_sum(candidates, target - candidates[i], i, tmp_vec, rst);
+            tmp_vec.pop_back();
+        }
+    }
+
 
 
 };
