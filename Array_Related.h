@@ -740,8 +740,8 @@ public:
         return ret_num;
     }
 
-    // #46
-    // Permutations
+       // #46
+    // Permutations I
     static vector<vector<int>> permute(vector<int>& nums) {
         vector<vector<int>> ret;
         vector<int> seq;
@@ -764,6 +764,30 @@ public:
             dfs_perm(ret, level + 1, nums, seq, visited);
             seq.pop_back();
             visited[i] = false;
+        }
+    }
+
+    // #47
+    // Permutations II
+    // https://www.youtube.com/watch?v=imLl2s9Ujis
+    static vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> seq, visited(nums.size(), 0);
+        sort(nums.begin(), nums.end());
+        dfs_perm2(nums, 0, visited, seq, res);
+        return res;
+    }
+    static void dfs_perm2(vector<int>& nums, int level, vector<int>& visited, vector<int>& seq, vector<vector<int>>& res) {
+        if (level >= nums.size()) {res.push_back(seq); return;}
+        for (int i = 0; i < (int)nums.size(); ++i) {
+            if (visited[i] == 1) continue;
+            // 在递归函数中要判断前面一个数和当前的数是否相等，如果相等，且其对应的 visited 中的值为1，当前的数字才能使用，否则需要跳过，这样就不会产生重复排列了
+            if (i > 0 && nums[i] == nums[i - 1] && visited[i - 1] == 0) continue;
+            visited[i] = 1;
+            seq.push_back(nums[i]);
+            dfs_perm2(nums, level + 1, visited, seq, res);
+            seq.pop_back();
+            visited[i] = 0;
         }
     }
 
@@ -867,7 +891,7 @@ public:
     }
 
     // #39
-    // Combination Sum
+    // Combination Sum 1 (repeatable element)
     static vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>> rst;
         vector<int> tmp_vec;
@@ -886,6 +910,47 @@ public:
         }
     }
 
+    // #40
+    // Combination Sum 2 (unrepeatable element)
+    static vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> rst;
+        vector<int> vec_tmp;
+        sort(candidates.begin(), candidates.end()); // sort for preventing duplicate combinations
+        comb2_dfs(rst, candidates, vec_tmp, 0, target);
+        return rst;
+    }
+
+    static void comb2_dfs(vector<vector<int>>& rst, vector<int>& candidates, vector<int>& vec_tmp, int start, int target){
+        if(target < 0) return;
+        if(target == 0) {rst.push_back(vec_tmp); return;}
+        for(int i = start; i < (int)candidates.size(); ++i){
+            // at the same for loop, to prevent duplicate combinations
+            if(i > start && candidates[i - 1] == candidates[i]) continue;
+
+            vec_tmp.push_back(candidates[start]);
+            comb2_dfs(rst, candidates, vec_tmp, i + 1, target-candidates[start]); // i+1
+            vec_tmp.pop_back();
+        }
+    }
+
+    // #41 hard (time limit: O(n), space limit: O(1))
+    // Utilize Bucket sort Algorithm
+    // [3, 4, -1 , 1]
+    // [0, 0, 0, 0] ==> [1, -1, 3, 4] (Bucket)
+    // [1, 2, 3, 4] (index, not exist)
+    static int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
+        for (int i = 0; i < n; ++i) {
+            // Important! element nums[i] should go to the position "nums[i] - 1" (idx starts from 0)
+            while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+                std::swap(nums[i], nums[nums[i] - 1]);
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] != i + 1) return i + 1;
+        }
+        return n + 1;
+    }
 
 
 };
