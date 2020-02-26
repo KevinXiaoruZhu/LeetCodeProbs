@@ -1,3 +1,15 @@
+# MacOS General
+.DS_Store?
+.AppleDouble
+.LSOverride
+*.DS_Store
+
+# Windows cache
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
 # Prerequisites
 *.d
 
@@ -26,12 +38,14 @@
 *.a
 *.lib
 
+# Clion
+/CMakeFiles/
+/cmake-build-debug/
+
 # Executables
 *.exe
 *.out
 *.app
-/CMakeFiles/
-/cmake-build-debug/
 *.txt
 .idea
 
