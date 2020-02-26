@@ -22,6 +22,7 @@ class SolutionDP{
 public:
 
     // #10 -hard
+    // String Matching
     /*
     Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
     '.' Matches any single character.
@@ -66,21 +67,48 @@ public:
     p = "mis*is*p*."
     Output: false
     */
+    // dp[i][j] indicates whether substring s[0, i) matches substring p[0, j)
+    // 1. P[i][j] = P[i - 1][j - 1], if p[j - 1] != '*' && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+    // 2. P[i][j] = P[i][j - 2], if p[j - 1] == '*' and the pattern repeats for 0 times;
+    // 3. P[i][j] = P[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'), if p[j - 1] == '*' and the pattern repeats for at least 1 times.
     static bool isMatch(string s, string p) {
-        if (p.empty()) return s.empty(); // size of string p is 0
-        if (p.size() > 1 && p[1] == '*'){ // '*' would not starts without preceding characters
-            return isMatch(s, p.substr(2)) || // p[0] repeat 0 times (skip over the '*')
-                   ( !s.empty() && (p[0] == s[0] || p[0] == '.') && isMatch(s.substr(1), p) );
-        }else{ // I. p[0] and p[1] are 'a-z' or '.'  II. size of string p is 1
-            return !s.empty() && (s[0] == p[0] || p[0] == '.') && isMatch(s.substr(1), p.substr(1));
+        int m = (int)s.size(), n = (int)p.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+        dp[0][0] = true;
+        for (int i = 0; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (j > 1 && p[j - 1] == '*') {
+                    dp[i][j] = dp[i][j - 2] || (i > 0 && (s[i - 1] == p[j - 2] || p[j - 2] == '.') && dp[i - 1][j]);
+                } else {
+                    dp[i][j] = i > 0 && dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+                }
+            }
         }
+        return dp[m][n];
     }
 
 
     // #44 Wildcard Matching -hard
     // '?' Matches any single character.
     // '*' Matches any sequence of characters (including the empty sequence).
-
+    static bool isMatchWild(string s, string p) {
+        int m = (int)s.size(), n = (int)p.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+        dp[0][0] = true;
+        for (int i = 1; i <= n; ++i) {
+            if (p[i - 1] == '*') dp[0][i] = dp[0][i - 1];
+        }
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (p[j - 1] == '*') {
+                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+                } else {
+                    dp[i][j] = (s[i - 1] == p[j - 1] || p[j - 1] == '?') && dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[m][n];
+    }
 };
 
 
