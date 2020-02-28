@@ -271,6 +271,19 @@ public:
         return ret_vec;
     }
 
+    // #49
+    static vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        std::unordered_map<string, std::vector<string>> dict;
+        for(const auto & str : strs){
+            string key = str;
+            std::sort(key.begin(), key.end());
+            dict[key].push_back(str);
+        }
+        std::vector<std::vector<string>> ret_vec;
+        ret_vec.reserve(dict.size());
+        for(const auto & pair : dict) ret_vec.push_back(pair.second);
+        return ret_vec;
+    }
 
 
 
