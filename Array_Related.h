@@ -729,6 +729,17 @@ public:
         return ret_capacity;
     }
 
+    // #48 rotate 2d array
+    static void rotate(vector<vector<int>> & matrix){
+        int n = (int) matrix.size();
+        for(int i = 0; i < n / 2; ++i)
+            for(int j = i; j < n - 1 - i; ++j){
+                int tmp_num = matrix[i][j];
+                matrix[i + j][n - 1 - i] = matrix[i][j];
+            }
+    }
+
+
 };
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H

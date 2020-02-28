@@ -19,8 +19,10 @@
 
 using namespace std;
 class SolutionGreedy{
-    // #44 Jump II
-    static int jump(vector<int>& nums) {
+public:
+
+    // #44 Jump II - hard
+    static int jump(const vector<int>& nums) {
         if(nums.size() < 2) return 0;
         int max_ = 0, pre = 0, last_pre = 0, jump_num = 0;
         while(max_ < nums.size() - 1){
@@ -34,5 +36,33 @@ class SolutionGreedy{
         }
         return jump_num;
     }
+
+
+    // # 55 JUMP I
+    // DP Alg
+    static bool canJumpDP(const vector<int> & nums){
+        if(nums.size() < 2) return true;
+        bool dp[(int)nums.size()];
+        for(int i = 0; i < (int)nums.size(); ++i) dp[i] = false;
+        dp[0] = true;
+        for(int i = 1; i < (int)nums.size(); ++i){
+            for(int j = i - 1; j >= 0; --j)
+                if(dp[j] && nums[j] >= i - j) {
+                    dp[i] = true; break;
+                }
+        }
+        return dp[(int)nums.size() - 1];
+    }
+    // Greedy Alg
+    static bool canJumpGreedy(const vector<int> & nums){
+        int n = (int)nums.size(), reach = 0;
+        for (int i = 0; i < n; ++i) {
+            if (i > reach || reach >= n - 1) break;
+            reach = max(reach, i + nums[i]);
+        }
+        return reach >= n - 1;
+    }
+
+
 };
 #endif //LEETCODEPROBS_GREEDY_H
