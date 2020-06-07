@@ -5,6 +5,7 @@
 #ifndef ALGORITHMPRACTICE_DATA_STRUCTURES_H
 #define ALGORITHMPRACTICE_DATA_STRUCTURES_H
 
+#include <stdio.h>
 #include <vector>
 
 // Segment Tree
@@ -157,7 +158,7 @@ bool union_find_circle_test(){
     for(auto & edge : edges){
         int x = edge.first;
         int y = edge.second;
-        if (union_find_union_vertices(x, y, parent, rank)){
+        if (union_find_union_vertices(x, y, parent, rank)) {
             return true;
         }
     }
@@ -165,6 +166,67 @@ bool union_find_circle_test(){
 }
 
 
+// Trie (Prefix Tree)
+const int ALPHABET_SIZE = 26;
+typedef struct trie_node {
+    int count;   // 记录该节点代表的单词的个数
+    trie_node* children[ALPHABET_SIZE]; // 各个子节点
+}* trie;
+trie_node* create_trie_node() {
+    trie_node* pNode = new trie_node();
+    pNode->count = 0;
+    for (int i = 0; i < ALPHABET_SIZE; ++i)
+        pNode->children[i] = nullptr;
+    return pNode;
+}
+void trie_insert(trie root, char* key) {
+    trie_node* node = root;
+    char* p = key;
+    while (*p) {
+        if (node->children[*p - 'a'] == NULL) {
+            node->children[*p - 'a'] = create_trie_node();
+        }
+        node = node->children[*p - 'a'];
+        ++p;
+    }
+    node->count += 1;
+}
+/**
+ * Return:
+ *  0: not exist
+ *  Other Number: appearing times
+ */
+int trie_search(trie root, char* key) {
+    trie_node* node = root;
+    char* p = key;
+    while (*p && node != nullptr) {
+        node = node->children[*p - 'a'];
+        ++p;
+    }
+
+    if (node == nullptr)
+        return 0;
+    else
+        return node->count;
+}
+int trie_test() {
+    // Keywords set
+    char keys[][8] = {"the", "a", "there", "answer", "any", "by", "bye", "their"};
+    trie root = create_trie_node();
+
+    // Build trie (Prefix tree)
+    for (int i = 0; i < 8; i++)
+        trie_insert(root, keys[i]);
+
+    // Search string test
+    char s[][32] = {"Present in trie", "Not present in trie"};
+    printf("%s --- %s\n", "the", trie_search(root, "the") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "these", trie_search(root, "these") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "their", trie_search(root, "their") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "thaw", trie_search(root, "thaw") > 0 ? s[0] : s[1]);
+
+    return 0;
+}
 
 
 #endif //ALGORITHMPRACTICE_DATA_STRUCTURES_H
