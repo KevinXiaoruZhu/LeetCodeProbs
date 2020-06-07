@@ -5,6 +5,7 @@
 #ifndef ALGORITHMPRACTICE_DATA_STRUCTURES_H
 #define ALGORITHMPRACTICE_DATA_STRUCTURES_H
 
+#include <vector>
 
 // Segment Tree
 const int MAX_SEG_TREE_LEN = 1000;
@@ -99,6 +100,71 @@ void seg_tree_test(){
     seg_tree_update(arr, tree, 0, 0, size - 1, 4, 19);
     seg_tree_query(arr, tree, 0, 0, size - 1, 1, 4);
 }
+
+// Disjoint Set
+void union_find_init(std::vector<int>& parent, std::vector<int>& rank){
+    // Size is the number of the Vertices of Graph
+    for(int i = 0; i < (int)parent.size(); ++i){
+        parent[i] = -1;
+        rank[i] = 0;
+    }
+}
+int union_find_find_root(int x, const std::vector<int>& parent){
+    int x_root = x;
+    while (parent[x_root] != -1){
+        x_root = parent[x_root];
+    }
+    return x_root;
+}
+/*
+ * Return:
+ *  1 - circle exists
+ *  0 - current x, y is not in a circle
+ * */
+int union_find_union_vertices(int x, int y, std::vector<int>& parent, std::vector<int>& rank){
+    int x_root = union_find_find_root(x, parent);
+    int y_root = union_find_find_root(y, parent);
+    if (x_root == y_root){
+        return 1;
+    } else {
+
+        if (rank[x_root] > rank[y_root]){
+            parent[y_root] = x_root;
+        } else if (rank[x_root] < rank[y_root]){
+            parent[x_root] = y_root;
+        } else {
+            parent[x_root] = y_root;
+            rank[y_root]++;
+        }
+        return 0;
+    }
+}
+// Check if there are circles in a graph
+/*
+ * Return:
+ *  true - circle exists
+ *  false - circle does not exist
+ * */
+bool union_find_circle_test(){
+    std::vector<int> parent(6, 0);
+    std::vector<int> rank(6, 0);
+    // Init graph
+    std::vector<std::pair<int, int>> edges = {
+            {0, 1}, {1, 2}, {1, 3}, {3, 4}, {2, 5}
+    };
+    union_find_init(parent, rank);
+
+    for(auto & edge : edges){
+        int x = edge.first;
+        int y = edge.second;
+        if (union_find_union_vertices(x, y, parent, rank)){
+            return true;
+        }
+    }
+    return false;
+}
+
+
 
 
 #endif //ALGORITHMPRACTICE_DATA_STRUCTURES_H
