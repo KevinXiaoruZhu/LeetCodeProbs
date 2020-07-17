@@ -5,7 +5,7 @@
 #ifndef ALGORITHMPRACTICE_DATA_STRUCTURES_H
 #define ALGORITHMPRACTICE_DATA_STRUCTURES_H
 
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 
 // Segment Tree
@@ -196,9 +196,9 @@ void trie_insert(trie root, char* key) {
  *  0: not exist
  *  Other Number: appearing times
  */
-int trie_search(trie root, char* key) {
+int trie_search(trie root, const char* key) {
     trie_node* node = root;
-    char* p = key;
+    const char* p = key;
     while (*p && node != nullptr) {
         node = node->children[*p - 'a'];
         ++p;
@@ -215,15 +215,15 @@ int trie_test() {
     trie root = create_trie_node();
 
     // Build trie (Prefix tree)
-    for (int i = 0; i < 8; i++)
-        trie_insert(root, keys[i]);
+    for (auto & key : keys)
+        trie_insert(root, key);
 
     // Search string test
     char s[][32] = {"Present in trie", "Not present in trie"};
-    printf("%s --- %s\n", "the", trie_search(root, "the") > 0 ? s[0] : s[1]);
-    printf("%s --- %s\n", "these", trie_search(root, "these") > 0 ? s[0] : s[1]);
-    printf("%s --- %s\n", "their", trie_search(root, "their") > 0 ? s[0] : s[1]);
-    printf("%s --- %s\n", "thaw", trie_search(root, "thaw") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "the", trie_search(root, (char *)"the") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "these", trie_search(root, (char *)"these") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "their", trie_search(root, (char *)"their") > 0 ? s[0] : s[1]);
+    printf("%s --- %s\n", "thaw", trie_search(root, (char *)"thaw") > 0 ? s[0] : s[1]);
 
     return 0;
 }
