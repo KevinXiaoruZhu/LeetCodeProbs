@@ -50,4 +50,4 @@ ehthumbs_vista.db
 .idea
 
 # Test File
-test.cpp
+test*.cpp
