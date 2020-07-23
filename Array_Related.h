@@ -551,7 +551,7 @@ public:
 
     // #33
     // Binary search in totated array
-    static int search(vector<int>& nums, int target) {
+    static int searchBin(vector<int>& nums, int target) {
         int ret_idx = -1, l = 0, r = (int)nums.size() - 1;
         while(l <= r){
             int m = (r + l) / 2;
@@ -740,6 +740,34 @@ public:
                 matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 - i];
                 matrix[j][n - 1 - i] = tmp_num;
             }
+    }
+
+    // #56 Merge Intervals
+    // 1. check if the vector is empty first
+    // 2. check if the range of current element contains the next one's
+    static vector<vector<int>> merge_intervals(vector<vector<int>>& intervals) {
+        if (intervals.empty()) return {};
+
+        auto cmp = [](const vector<int>& a, const vector<int>& b) -> bool { return a[0] < b[0]; };
+        std::sort(intervals.begin(), intervals.end(), cmp);
+
+        vector<vector<int>> ret;
+        ret.reserve(intervals.size());
+        ret.push_back(intervals[0]);
+        //vector<int> tmp(intervals[0]);
+
+        for (int i = 1; i < intervals.size(); ++i) {
+
+            if (ret.back()[0] <= intervals[i][0] && ret.back()[1] >= intervals[i][1]) {
+                continue;
+            } else if (ret.back()[1] >= intervals[i][0]){
+                ret.back()[1] = intervals[i][1];
+            } else {
+                ret.push_back(intervals[i]);
+            }
+        }
+
+        return ret;
     }
 
 
