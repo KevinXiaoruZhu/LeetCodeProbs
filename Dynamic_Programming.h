@@ -110,6 +110,23 @@ public:
         return dp[m][n];
     }
 
+    // #62 Unique Paths - DP
+    /*
+     * Initiate 2D array d[m][n] = number of paths. To start, put number of paths equal to 1 for the first row and the first column.
+     * Iterate over all "inner" cells: d[col][row] = d[col - 1][row] + d[col][row - 1].
+     * Return d[m - 1][n - 1]
+     **/
+    static int uniquePaths(int m, int n) {
+        int dp[n];
+        for (int i = 0; i < n; ++i) dp[i] = 1;
+        for (int i = 1; i < m; ++i) {
+            for (int j = 1; j < n; ++j) {
+                dp[j] += dp[j - 1];
+            }
+        }
+        return dp[n - 1];
+    }
+
 
 };
 
