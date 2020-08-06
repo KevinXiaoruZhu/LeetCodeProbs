@@ -867,6 +867,101 @@ public:
 
     }
 
+    // #73 Set Matrix Zeroes
+    // Not allowed to use extra space (in-place algorithm)
+    // We need to utilize the first row & column to record the zero info for the whole matrix.
+    static void setZeroes(vector<vector<int>>& matrix) {
+        if (matrix.empty() || matrix[0].empty()) return;
+        int m = (int)matrix.size(), n = (int)matrix[0].size();
+        bool row_flag = false, col_flag = false;
+
+        for (int i = 0; i < m; ++i)
+            if (matrix[i][0] == 0) { row_flag = true; break;}
+
+        for (int i = 0; i < n; ++i)
+            if (matrix[0][i] == 0) { col_flag = true; break;}
+
+        for (int i = 1; i < m; ++i)
+            for (int j = 1; j < n; ++j){
+                if (!matrix[i][j]){
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+
+        for (int i = 1; i < m; ++i)
+            for (int j = 1; j < n; ++j){
+                if (!matrix[i][0] || !matrix[0][j]){
+                    matrix[i][j] = 0;
+                }
+            }
+
+        if (row_flag)
+            for (int i = 0; i < m; ++i) matrix[i][0] = 0;
+
+        if (col_flag)
+            for (int i = 0; i < n; ++i) matrix[0][i] = 0;
+
+    }
+
+    // #74 Search a 2D Matrix - Binary Search
+    static bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if (matrix.empty() || matrix[0].empty()) return false;
+
+        int m = (int)matrix.size(), n = (int)matrix[0].size();
+        int mid, left, right;
+
+        if (target < matrix[0][0]) return false;
+        left = 0; right = m;
+        while(left < right){
+            mid = (left + right) / 2;
+            if (matrix[mid][0] == target) return true;
+            if (matrix[mid][0] > target){
+                right = mid;
+                continue;
+            }
+            if (matrix[mid][0] < target){
+                left = mid + 1;
+                continue;
+            }
+        }
+
+        int target_row = (right > 0) ? (right - 1) : right;
+
+        left = 0; right = n;
+        while (left < right) {
+            mid = (left + right) / 2;
+            if (matrix[target_row][mid] == target) return true;
+            if (matrix[target_row][mid] > target){
+                right = mid;
+                continue;
+            }
+            if (matrix[target_row][mid] < target){
+                left = mid + 1;
+                continue;
+            }
+        }
+
+        return false;
+    }
+
+    static void sortColors1(vector<int>& nums) {
+        int color_num[3] = {0};
+        for (int num: nums) ++color_num[num];
+        int pos = 0;
+        for (int i; i < 3; ++i)
+            for (int j = 0; j < color_num[i]; ++j){
+                nums[pos++] = i;
+            }
+    }
+    static void sortColors2(vector<int>& nums) {
+        int left = 0, right = (int)nums.size() - 1;
+        while (left <= right){
+            if (nums[left] == 0) ++left;
+
+        }
+    }
+
 };
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
