@@ -945,20 +945,21 @@ public:
         return false;
     }
 
+    // #74 Sort Colors (3 diff: 0, 1, 2)
     static void sortColors1(vector<int>& nums) {
         int color_num[3] = {0};
         for (int num: nums) ++color_num[num];
         int pos = 0;
-        for (int i; i < 3; ++i)
+        for (int i = 0; i < 3; ++i)
             for (int j = 0; j < color_num[i]; ++j){
                 nums[pos++] = i;
             }
     }
     static void sortColors2(vector<int>& nums) {
         int left = 0, right = (int)nums.size() - 1;
-        while (left <= right){
-            if (nums[left] == 0) ++left;
-
+        for (int i = 0; i <= right; ++i) {
+            if (nums[i] == 0) std::swap(nums[i], nums[left++]);
+            else if (nums[i] == 2) std::swap(nums[i--], nums[right--]);
         }
     }
 
