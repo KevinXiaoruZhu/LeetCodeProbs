@@ -52,6 +52,57 @@ public:
         }
         return true;
     }
-    
+
+
+    // # 78 subsets
+    // input [1,2,3]
+    // output [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
+    static vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> ret;
+        vector<int> out;
+        std::sort(nums.begin(), nums.end());
+
+        dfsSubsets(ret, out, 0, nums);
+
+        return ret;
+    }
+    static void dfsSubsets(vector<vector<int>>& ret, vector<int>& out, int pos, vector<int>& nums) {
+        ret.push_back(out);
+        for(int i = pos; i < nums.size(); ++i) {
+            out.push_back(nums[i]);
+            dfsSubsets(ret, out, i + 1, nums);
+            out.pop_back();
+        }
+    }
+
+    // #79 Word Search
+    // The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring.
+    // The same letter cell may not be used more than once.
+    static bool exist(vector<vector<char>>& board, string word) {
+        if (board.empty() || board[0].empty()) return false;
+        int m = (int)board.size(), n = (int)board[0].size();
+
+        vector<vector<bool>> visited(m, vector<bool>(n));
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j)
+                if (dfs_exist(board, word, 0, i, j, visited)) return true;
+
+        return false;
+    }
+    static bool dfs_exist(const vector<vector<char>>& board, const string& word, int idx, int i, int j, vector<vector<bool>>& visited) {
+        if (idx == (int)word.size()) return true;
+
+        int m = (int)board.size(), n = (int)board[0].size();
+        if (i < 0 || j < 0 || i >= m || j >= n || visited[i][j] || board[i][j] != word[idx]) return false;
+
+        visited[i][j] = true;
+        bool rst = dfs_exist(board, word, idx + 1, i - 1, j, visited) ||
+                   dfs_exist(board, word, idx + 1, i, j - 1, visited) ||
+                   dfs_exist(board, word, idx + 1, i + 1, j, visited) ||
+                   dfs_exist(board, word, idx + 1, i, j + 1, visited);
+        visited[i][j] = false;
+
+        return rst;
+    }
 };
 #endif //LEETCODEPROBS_TRAVERSAL_H
