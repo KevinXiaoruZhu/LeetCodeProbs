@@ -986,6 +986,25 @@ public:
         }
         return false;
     }
+
+    // #84 Hard - Largest Rectangle in Histogram
+    // Given n non-negative integers representing the histogram's bar height where the width of each bar is 1
+    // find the area of largest rectangle in the histogram.
+    static int largestRectangleArea(vector<int> &height) {
+        int res = 0;
+        stack<int> stk;
+        height.push_back(0);
+        for (int i = 0; i < height.size(); ++i) {
+            if (stk.empty() || height[stk.top()] < height[i]) {
+                stk.push(i);
+            } else {
+                int cur = stk.top(); stk.pop();
+                res = max(res, height[cur] * (stk.empty() ? i : (i - stk.top() - 1)));
+                --i;
+            }
+        }
+        return res;
+    }
 };
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
