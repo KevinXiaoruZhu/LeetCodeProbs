@@ -990,21 +990,37 @@ public:
     // #84 Hard - Largest Rectangle in Histogram
     // Given n non-negative integers representing the histogram's bar height where the width of each bar is 1
     // find the area of largest rectangle in the histogram.
+
+/*
+ *  单调栈保存着一个数组以下这样的信息：
+ *  如果是找某个位置左右两边大于此数且最下标靠近它的数位置，那么扫描到下标i的时候的单调栈保存的是0~i-1区间中数字的的递增序列的下标。
+ *  找某个位置左右两边小于此数且最下标靠近它的数的位置的情况类似
+ *  作用：可以O(1)时间得知某个位置左右两侧比他大（或小）的数的位置
+
+ *  什么时候能用单调栈？
+ *  在你有高效率获取某个位置左右两侧比他大（或小）的数的位置的需求的时候。
+ *  对于出栈元素来说：找到右侧第一个比自身小的元素。
+ *  对于新元素来说：等待所有破坏递增顺序的元素出栈后，找到左侧第一个比自身小的元素。
+ *  */
     static int largestRectangleArea(vector<int> &height) {
         int res = 0;
         stack<int> stk;
         height.push_back(0);
         for (int i = 0; i < height.size(); ++i) {
-            if (stk.empty() || height[stk.top()] < height[i]) {
-                stk.push(i);
-            } else {
-                int cur = stk.top(); stk.pop();
-                res = max(res, height[cur] * (stk.empty() ? i : (i - stk.top() - 1)));
-                --i;
+            while (!stk.empty() && height[stk.top()] >= height[i]) {
+                int h = height[stk.top()];
+                stk.pop();
+                int diff = !stk.empty() ? stk.top() : -1;
+                res = std::max(res, h * (i - diff - 1));
             }
+
+            stk.push(i);
         }
         return res;
     }
+
+
+
 };
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H

@@ -127,6 +127,9 @@ public:
         return dp[n - 1];
     }
 
+    static int maximalRectangle(vector<vector<char>>& matrix) {
+
+    }
 
 };
 
