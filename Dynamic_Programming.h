@@ -128,9 +128,31 @@ public:
     }
 
     static int maximalRectangle(vector<vector<char>>& matrix) {
-
+        if (matrix.empty() || matrix[0].empty()) return 0;
+        int m = (int) matrix.size(), n = (int) matrix[0].size(), res = 0;
+        vector<vector<int>> h_max(m, vector<int>(n, 0));
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j) {
+                if (matrix[i][j] == '0') continue;
+                if (matrix[i][j] == '1') {
+                    if (j == 0) h_max[i][j] = 1;
+                    else h_max[i][j] = h_max[i][j - 1] + 1;
+                }
+            }
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j) {
+                if (h_max[i][j] == 0) continue;
+                int tmp_area = h_max[i][j];
+                res = std::max(res, tmp_area);
+                int height = tmp_area;
+                for (int k = i - 1; k >= 0; --k) {
+                    height = std::min(height, h_max[k][j]);
+                    tmp_area = (i - k + 1) * height;
+                    res = std::max(res, tmp_area);
+                }
+            }
+        return res;
     }
-
 };
 
 
