@@ -990,7 +990,6 @@ public:
     // #84 Hard - Largest Rectangle in Histogram
     // Given n non-negative integers representing the histogram's bar height where the width of each bar is 1
     // find the area of largest rectangle in the histogram.
-
 /*
  *  单调栈保存着一个数组以下这样的信息：
  *  如果是找某个位置左右两边大于此数且最下标靠近它的数位置，那么扫描到下标i的时候的单调栈保存的是0~i-1区间中数字的的递增序列的下标。
@@ -1019,8 +1018,18 @@ public:
         return res;
     }
 
-
-
+    // #88 easy - Merge Sorted Array
+    // Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.
+    static void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        int i = m - 1, j = n - 1, k = m + n - 1;
+        while (j >= 0) {
+            // if (i >= 0 && nums1[i] >= nums2[j]) { nums1[k--] = nums1[i--];
+            // } else {
+            //     nums1[k--] = nums2[j--];
+            // }
+            nums1[k--] = (i >= 0 && nums1[i] >= nums2[j]) ? nums1[i--] : nums2[j--];
+        }
+    }
 };
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
