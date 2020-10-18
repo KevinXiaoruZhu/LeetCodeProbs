@@ -104,5 +104,25 @@ public:
 
         return rst;
     }
+
+    // #90
+    static vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        if (nums.empty()) return {};
+        vector<vector<int>> ret;
+        vector<int> out;
+        std::sort(nums.begin(), nums.end());
+        subsetsWithDupDFS(nums, 0, out, ret);
+        return ret;
+    }
+    static void subsetsWithDupDFS(const vector<int>& nums, int pos, vector<int>& out, vector<vector<int>>& ret){
+        ret.push_back(out);
+        for (auto it : out) std::cout << it << "\t"; std::cout << "\n";
+        for (int i = pos; i < (int)nums.size(); ++i) {
+            out.push_back(nums[i]);
+            subsetsWithDupDFS(nums, i + 1, out, ret);
+            out.pop_back();
+            while (i + 1 < (int)nums.size() && nums[i] == nums[i + 1]) ++i;
+        }
+    }
 };
 #endif //LEETCODEPROBS_TRAVERSAL_H
