@@ -116,7 +116,7 @@ public:
     }
     static void subsetsWithDupDFS(const vector<int>& nums, int pos, vector<int>& out, vector<vector<int>>& ret){
         ret.push_back(out);
-        for (auto it : out) std::cout << it << "\t"; std::cout << "\n";
+        // for (auto it : out) std::cout << it << "\t"; std::cout << "\n";
         for (int i = pos; i < (int)nums.size(); ++i) {
             out.push_back(nums[i]);
             subsetsWithDupDFS(nums, i + 1, out, ret);

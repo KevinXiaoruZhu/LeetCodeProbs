@@ -127,6 +127,7 @@ public:
         return dp[n - 1];
     }
 
+    // #85
     static int maximalRectangle(vector<vector<char>>& matrix) {
         if (matrix.empty() || matrix[0].empty()) return 0;
         int m = (int) matrix.size(), n = (int) matrix[0].size(), res = 0;
