@@ -1053,7 +1053,15 @@ public:
         return triangle[0][0];
     }
 
-
+    // #121 Best Time to Buy and Sell Stock
+    static int maxProfit(vector<int>& prices) {
+        int res = 0, buy = INT_MAX;
+        for (auto price : prices) {
+            buy = min(buy, price);
+            res = max(res, price - buy);
+        }
+        return res;
+    }
 
 
 };
