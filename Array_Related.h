@@ -1063,6 +1063,42 @@ public:
         return res;
     }
 
+    // #122 Best Time to Buy and Sell Stock II
+    // You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times).
+    // Note: You may not engage in multiple transactions at the same time (i.e., you must sell the stock before you buy again).
+    static int maxProfitII(vector<int>& prices) {
+        int res = 0, n = (int) prices.size();
+        for (int i = 0; i < n - 1; ++i) {
+            if (prices[i] < prices[i + 1]) {
+                res += prices[i + 1] - prices[i];
+            }
+        }
+        return res;
+    }
+
+    // # 123 Best Time to Buy and Sell Stock III - hard
+    // Say you have an array for which the ith element is the price of a given stock on day i.
+    // Design an algorithm to find the maximum profit. You may complete at most two transactions.
+    static int maxProfitIII(vector<int>& prices) {
+        if (prices.empty()) return 0;
+        int buy = 0x3f3f3f3f, profit = 0;
+        int res_arr[prices.size()];
+        for (int i = 0; i < (int)prices.size(); ++i){
+            buy = std::min(buy, prices[i]);
+            profit = std::max(profit, prices[i] - buy);
+            res_arr[i] = profit;
+        }
+        int sell = 0, max_profit = 0; profit = 0;
+        for (int j = (int)prices.size() - 1; j >= 0; --j) {
+            sell = std::max(sell, prices[j]);
+            profit = std::max(profit, sell - prices[j]);
+            res_arr[j] += profit;
+            max_profit = std::max(max_profit, res_arr[j]);
+        }
+        return max_profit;
+    }
+
+
 
 };
 

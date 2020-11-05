@@ -124,5 +124,25 @@ public:
             while (i + 1 < (int)nums.size() && nums[i] == nums[i + 1]) ++i;
         }
     }
+
+    // #126 Word Ladder II - hard
+    // Given two words (beginWord and endWord), and a dictionary's word list, find all shortest transformation sequence(s) from beginWord to endWord, such that:
+    // Only one letter can be changed at a time
+    // Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+    // Note:
+    //  Return an empty list if there is no such transformation sequence.
+    //  All words have the same length.
+    //  All words contain only lowercase alphabetic characters.
+    //  You may assume no duplicates in the word list.
+    //  You may assume beginWord and endWord are non-empty and are not the same.
+    static vector<vector<string>> findLaddersII(string beginWord, string endWord, vector<string>& wordList) {
+        // std::map<string, int> map1{{"key1", 3}, std::pair<string, int>("key2", 1)};
+        // if(std::find(wordList.begin(), wordList.end(), endWord) == wordList.end() || wordList.empty()) return {};
+        int word_len = (int)beginWord.size(), list_len = (int)wordList.size();
+        std::unordered_set<string> dict(wordList.begin(), wordList.end());
+        if (!dict.count(endWord)) return {};
+        dict.erase(beginWord); dict.erase(endWord);
+
+    }
 };
 #endif //LEETCODEPROBS_TRAVERSAL_H

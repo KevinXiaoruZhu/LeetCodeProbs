@@ -154,6 +154,8 @@ public:
             }
         return res;
     }
+
+    // #123
 };
 
 
