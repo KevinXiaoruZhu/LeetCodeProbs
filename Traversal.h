@@ -142,7 +142,7 @@ public:
         std::unordered_set<string> dict(wordList.begin(), wordList.end());
         if (!dict.count(endWord)) return {};
         dict.erase(beginWord); dict.erase(endWord);
-
+        
     }
 };
 #endif //LEETCODEPROBS_TRAVERSAL_H

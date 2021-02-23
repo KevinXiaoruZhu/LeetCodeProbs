@@ -19,8 +19,21 @@
 
 using namespace std;
 const int INT_MAX = INT32_MAX;
+
 class SolutionArray {
 public:
+
+    // Prefix Sum Array
+    //   1 2 3  4  5  6
+    // 0 1 3 6 10 15 21
+    static vector<int> getPrefixSum(const vector<int>& nums){
+        vector<int> prefix_sum(nums.size() + 1, 0);
+        for (int i = 0; i < (int)nums.size(); ++i){
+            prefix_sum[i + 1] = prefix_sum[i] + nums[i];
+        }
+        return prefix_sum;
+    }
+
     // #1
     /*
      * Given an array of integers, return indices of the two numbers such that they add up to a specific target.
@@ -1098,6 +1111,8 @@ public:
         return max_profit;
     }
 
+    // Two Pointers
+    // 209. Minimum Size Subarray Sum
 
 
 };
