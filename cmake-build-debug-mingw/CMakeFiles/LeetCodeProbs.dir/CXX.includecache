@@ -1,0 +1,68 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Kevin Xiaoru Zhu/CLionProjects/LeetCodeProbs/Array_Related.h
+iostream
+-
+cmath
+-
+unordered_map
+-
+unordered_set
+-
+map
+-
+stack
+-
+set
+-
+algorithm
+-
+vector
+-
+string
+-
+stack
+-
+queue
+-
+
+C:/Users/Kevin Xiaoru Zhu/CLionProjects/LeetCodeProbs/String_Related.h
+iostream
+-
+cmath
+-
+unordered_map
+-
+unordered_set
+-
+map
+-
+stack
+-
+set
+-
+algorithm
+-
+vector
+-
+string
+-
+stack
+-
+queue
+-
+
+C:/Users/Kevin Xiaoru Zhu/CLionProjects/LeetCodeProbs/test.cpp
+iostream
+-
+Array_Related.h
+C:/Users/Kevin Xiaoru Zhu/CLionProjects/LeetCodeProbs/Array_Related.h
+String_Related.h
+C:/Users/Kevin Xiaoru Zhu/CLionProjects/LeetCodeProbs/String_Related.h
+

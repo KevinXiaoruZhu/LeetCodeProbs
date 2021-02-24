@@ -23,17 +23,6 @@ const int INT_MAX = INT32_MAX;
 class SolutionArray {
 public:
 
-    // Prefix Sum Array
-    //   1 2 3  4  5  6
-    // 0 1 3 6 10 15 21
-    static vector<int> getPrefixSum(const vector<int>& nums){
-        vector<int> prefix_sum(nums.size() + 1, 0);
-        for (int i = 0; i < (int)nums.size(); ++i){
-            prefix_sum[i + 1] = prefix_sum[i] + nums[i];
-        }
-        return prefix_sum;
-    }
-
     // #1
     /*
      * Given an array of integers, return indices of the two numbers such that they add up to a specific target.
@@ -1116,5 +1105,48 @@ public:
 
 
 };
+
+class LintSolutionArray{
+    // Prefix Sum Array
+//   1 2 3  4  5  6
+// 0 1 3 6 10 15 21
+    static vector<int> getPrefixSum(const vector<int>& nums){
+        vector<int> prefix_sum(nums.size() + 1, 0);
+        for (int i = 0; i < (int)nums.size(); ++i){
+            prefix_sum[i + 1] = prefix_sum[i] + nums[i];
+        }
+        return prefix_sum;
+    }
+
+// #Lint1844
+/**
+ * @param nums: a list of integer
+ * @param k: an integer
+ * @return: return an integer, denote the minimum length of continuous subarrays whose sum equals to k
+ */
+    int subarraySumEqualsKII(vector<int> &nums, int k) {
+        int rst = 0x3f3f3f3f;
+
+        vector<int> prefix_sum(nums.size() + 1, 0);
+        for (int i = 0; i < (int)nums.size(); ++i){
+            prefix_sum[i + 1] = prefix_sum[i] + nums[i];
+        }
+
+        std::unordered_map<int, int> sum2idx;
+        sum2idx[0] = 0;
+        for (int end = 0; end < nums.size(); ++end) {
+            if (sum2idx.find(prefix_sum[end + 1] - k) != sum2idx.end()) {
+                // found one start point that meet the sum-k req for the current end point
+                // sum2idx[prefix_sum[end + 1] - k] is the start point idx
+                int len = end + 1 - sum2idx[prefix_sum[end + 1] - k];
+                rst = std::min(rst, len);
+            }
+            sum2idx[prefix_sum[end + 1]] = end + 1;
+        }
+        return rst;
+
+    }
+};
+
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
