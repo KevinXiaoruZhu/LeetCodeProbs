@@ -16,6 +16,7 @@
 #include <string>
 #include <stack>
 #include <queue>
+#include <functional>
 
 using namespace std;
 const int INT_MAX = INT32_MAX;
@@ -126,8 +127,8 @@ public:
         if(i >= nums1.size()) return nums2[j + k -1];
         if(j >= nums2.size()) return nums1[i + k -1];
         if(k == 1) return min(nums1[i], nums2[j]);
-        int mid1 = ( (i + k / 2 - 1) < nums1.size() ? nums1[i + k / 2 - 1] : INT32_MAX);
-        int mid2 = ( (j + k / 2 - 1) < nums2.size() ? nums2[j + k / 2 - 1] : INT32_MAX);
+        int mid1 = ( (i + k / 2 - 1) < nums1.size() ? nums1[i + k / 2 - 1] : INT_MAX);
+        int mid2 = ( (j + k / 2 - 1) < nums2.size() ? nums2[j + k / 2 - 1] : INT_MAX);
         if(mid1 < mid2)
             return find_no_k_element(nums1, i + k / 2, nums2, j, k - k / 2);
         else
@@ -279,7 +280,7 @@ public:
     // #16
     // threeSumClosest
     static int threeSumClosest(vector<int>& nums, int target) {
-        int diff = INT32_MAX, closest = INT32_MAX;
+        int diff = INT_MAX, closest = INT_MAX;
         std::sort(nums.begin(), nums.end());
         // diff = std::abs(target - closest);
         for(int k = 0; k < int(nums.size() - 2); ++k){
@@ -1124,9 +1125,11 @@ class LintSolutionArray{
  * @param k: an integer
  * @return: return an integer, denote the minimum length of continuous subarrays whose sum equals to k
  */
-    int subarraySumEqualsKII(vector<int> &nums, int k) {
+    static int subarraySumEqualsKII(vector<int> &nums, int k) {
         int rst = 0x3f3f3f3f;
 
+        // prefix array length: len(nums) + 1
+        // sum from element i to j: prefix[j+1] - prefix[i]
         vector<int> prefix_sum(nums.size() + 1, 0);
         for (int i = 0; i < (int)nums.size(); ++i){
             prefix_sum[i + 1] = prefix_sum[i] + nums[i];
@@ -1144,8 +1147,18 @@ class LintSolutionArray{
             sum2idx[prefix_sum[end + 1]] = end + 1;
         }
         return rst;
+    }
+
+    // #Lint1507
+    /**
+     * @param A: the array
+     * @param K: sum
+     * @return: the length
+     */
+    int shortestSubarray(vector<int> &A, int K) {
 
     }
+
 };
 
 
