@@ -1167,21 +1167,40 @@ static int subarraySumEqualsKII(vector<int> &nums, int k) {
      * @param after: the matrix
      * @return: restore the matrix
      */
+// algorithm from before to after matrix:
+//    for (int i = 0; i < before.size(); ++i)
+//        for (int j = 0; j < before[0].size(); ++j) {
+//            int s = 0;
+//            for (int i1 = 0; i1 <=i; ++i1)
+//                for (int j1 = 0; j1 <= j; ++j1) {
+//                    s = s + before[i1][j1];
+//                }
+//            after[i][j] = s;
+//        }
 vector<vector<int>> matrixRestoration(int n, int m, vector<vector<int>> &after) {
     vector<vector<int>> before(n, vector<int>(m, 0));
-    before[0][0] = after[0][0];
-    for (int i = 1; i < n; ++i) {
-        before[i][0] = after[i][0] - after[i-1][0];
-    }
-    for (int j = 1; j < m; ++j) {
-        before[0][j] = after[0][j] - after[0][j-1];
-    }
+    // analysis (without corner cases):
+    //      before[i][j] = after[i][j] - after[i-1][j] - after[i][j-1] + after[i-1][j-1];
+    for (int i = n - 1; i >= 0; --i)
+        for (int j = m - 1; j >= 0; --j) {
+            if (i == 0 && j ==0) {
+                before[i][j] = after[i][j];
+                continue;
+            }
+            if (i == 0) {
+                before[i][j] = after[i][j] - after[i][j-1];
+            }
 
-    for (int i = 1; i < n; ++i) {
-        for (int j = 1; j < m; ++j) {
-            before[i][j] = after[i][j] - after[i-1][j] - after[i][j-1] + after[i-1][j-1];
+            if (j == 0) {
+                before[i][j] = after[i][j] - after[i-1][j];
+            }
+
+            if (i != 0 && j != 0) {
+                before[i][j] = after[i][j] - after[i-1][j] - after[i][j-1] + after[i-1][j-1];
+            }
         }
-    }
+
+    return before;
 
     return before;
 }
