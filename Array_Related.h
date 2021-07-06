@@ -21,7 +21,7 @@
 
 using namespace std;
 const int INT_MAX = INT32_MAX;
-
+const int INT_MIN = INT32_MIN;
 // #1
 /*
  * Given an array of integers, return indices of the two numbers such that they add up to a specific target.
@@ -1201,8 +1201,6 @@ vector<vector<int>> matrixRestoration(int n, int m, vector<vector<int>> &after) 
         }
 
     return before;
-
-    return before;
 }
 
 // #Lint1507 hard
@@ -1242,6 +1240,58 @@ static bool shortestSubarray_isValid(const vector<int> &prefixSum, const int K, 
             return true;
         minHeap.push(end, prefixSum[end]);
     }
+    return false;
+}
+
+// #617
+bool findMaxAverage_check(const vector<int> &nums, int k, double avg);
+double findMaxAverage(vector<int>& nums, int k) {
+    if (nums.empty()) {
+        return 0;
+    }
+
+    // binary search on ans, condition + min/max
+    int n = nums.size();
+
+    double low = nums.front(), high = nums.front();
+    for (int i = 0; i < n; i++) {
+        low = min((double)nums[i], low);
+        high = max((double)nums[i], high);
+    }
+
+    double mid;
+    while (high - low > 1e-6) {
+        mid = low + (high - low) / 2;
+        if (findMaxAverage_check(nums, k, mid)) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+bool findMaxAverage_check(const vector<int> &nums, int k, double avg) {
+    int n = nums.size();
+
+    double ls = 0, rs = 0, mls = 0;
+
+    // initialize
+    for (int i = 0; i < k; i++)
+        rs += nums[i] - avg;
+
+    if (rs >= 0)
+        return true;
+
+    // general case
+    for (int i = k; i < n; i++) {
+        rs += nums[i] - avg;
+        ls += nums[i - k] - avg;
+        mls = min(ls, mls);
+        if (rs >= mls)
+            return true;
+    }
+
     return false;
 }
 
