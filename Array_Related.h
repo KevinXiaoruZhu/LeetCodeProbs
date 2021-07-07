@@ -1244,6 +1244,21 @@ static bool shortestSubarray_isValid(const vector<int> &prefixSum, const int K, 
 }
 
 // #617
+// Given an array with positive and negative numbers,
+//   find the maximum average subarray which length should be greater or equal to given length k.
+
+//   Input:
+//   [1,12,-5,-6,50,3]
+//   3
+//   Output:
+//   15.667
+//   Explanation:
+//   (-6 + 50 + 3) / 3 = 15.667
+/**
+ * @param nums: an array with positive and negative numbers
+ * @param k: an integer
+ * @return: the maximum average
+ */
 bool findMaxAverage_check(const vector<int> &nums, int k, double avg);
 double findMaxAverage(vector<int>& nums, int k) {
     if (nums.empty()) {
@@ -1268,12 +1283,10 @@ double findMaxAverage(vector<int>& nums, int k) {
             high = mid;
         }
     }
-
     return low;
 }
 bool findMaxAverage_check(const vector<int> &nums, int k, double avg) {
     int n = nums.size();
-
     double ls = 0, rs = 0, mls = 0;
 
     // initialize
@@ -1295,5 +1308,47 @@ bool findMaxAverage_check(const vector<int> &nums, int k, double avg) {
     return false;
 }
 
+
+// #391 · Number of Airplanes in the Sky
+//Input: [(1, 10), (2, 3), (5, 8), (4, 7)]
+//Output: 3
+//Explanation:
+// The first airplane takes off at 1 and lands at 10.
+// The second airplane takes off at 2 and lands at 3.
+// The third airplane takes off at 5 and lands at 8.
+// The forth airplane takes off at 4 and lands at 7.
+// During 5 to 6, there are three airplanes in the sky.
+/**
+ * @param intervals: An interval array
+ * @return: Count of airplanes are in the sky.
+ */
+// Definition of Interval:
+class Interval {
+public:
+    int start, end;
+    Interval(int start, int end) {
+        this->start = start;
+        this->end = end;
+    }
+};
+int countOfAirplanes(vector<Interval> &airplanes) {
+    priority_queue<int,vector<int>,greater<>> q;
+    std::function<bool(const Interval& a, const Interval& b)> sortCmp = [] (const Interval& a, const Interval& b) -> bool {
+        if (a.start == b.start) {
+            return  a.end < b.end;
+        }
+        return a.start < b.start;
+    };
+    sort(airplanes.begin(), airplanes.end(), sortCmp);
+    int res = 0;
+    int n = airplanes.size();
+    for (int i = 0; i < n; i++) {
+        while (!q.empty() && q.top() <= airplanes[i].start)
+            q.pop();
+        q.push(airplanes[i].end);
+        res = max(res, (int)q.size());
+    }
+    return res;
+}
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
