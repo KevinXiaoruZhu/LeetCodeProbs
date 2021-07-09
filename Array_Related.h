@@ -1259,7 +1259,7 @@ static bool shortestSubarray_isValid(const vector<int> &prefixSum, const int K, 
  * @param k: an integer
  * @return: the maximum average
  */
-bool findMaxAverage_check(const vector<int> &nums, int k, double avg);
+bool findMaxAverage_canFind(const vector<int> &nums, int k, double avg);
 double findMaxAverage(vector<int>& nums, int k) {
     if (nums.empty()) {
         return 0;
@@ -1277,7 +1277,7 @@ double findMaxAverage(vector<int>& nums, int k) {
     double mid;
     while (high - low > 1e-6) {
         mid = low + (high - low) / 2;
-        if (findMaxAverage_check(nums, k, mid)) {
+        if (findMaxAverage_canFind(nums, k, mid)) {
             low = mid;
         } else {
             high = mid;
@@ -1285,23 +1285,22 @@ double findMaxAverage(vector<int>& nums, int k) {
     }
     return low;
 }
-bool findMaxAverage_check(const vector<int> &nums, int k, double avg) {
-    int n = nums.size();
-    double ls = 0, rs = 0, mls = 0;
 
-    // initialize
-    for (int i = 0; i < k; i++)
-        rs += nums[i] - avg;
+bool findMaxAverage_canFind(const vector<int> &nums, int k, double avg) {
+    int n = (int) nums.size();
+    double rightSum = 0, leftSum = 0, minLeftSum = 0;
+    for (int i = 0; i < k; ++i)
+        rightSum += nums[i] - avg;
 
-    if (rs >= 0)
+    if (rightSum >= 0)
         return true;
 
-    // general case
-    for (int i = k; i < n; i++) {
-        rs += nums[i] - avg;
-        ls += nums[i - k] - avg;
-        mls = min(ls, mls);
-        if (rs >= mls)
+    for (int i = k; i < n; ++i) {
+        rightSum += nums[i] - avg;
+        leftSum += nums[i - k] - avg;
+        minLeftSum = std::min(minLeftSum, leftSum);
+
+        if (rightSum - minLeftSum >= 0)
             return true;
     }
 
@@ -1348,6 +1347,40 @@ int countOfAirplanes(vector<Interval> &airplanes) {
         q.push(airplanes[i].end);
         res = max(res, (int)q.size());
     }
+    return res;
+}
+
+/**
+     * @param str: the string
+     * @param dict: the dictionary
+     * @return: return words which  are subsequences of the string
+     */
+vector<string> findWords(string &str, vector<string> &dict) {
+    if (str.empty() || dict.empty())
+        return {};
+
+    int n = (int) dict.size(), len = (int) str.size();
+    std::vector<int> index(n, 0);
+    std::vector<string> res = {};
+    res.reserve(n);
+
+    for (int i = 0; i < len; ++i)
+        for (int j = 0; j < n; ++j) {
+            if (index[j] == -1)
+                continue;
+
+            if (str[i] == dict[j][index[j]])
+                ++index[j];
+
+            if (index[j] == (int) dict[j].size())
+                index[j] = -1;
+        }
+
+    for (int i = 0; i < n; ++i) {
+        if (index[i] == -1)
+            res.emplace_back(dict[i]);
+    }
+
     return res;
 }
 
