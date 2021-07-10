@@ -1384,4 +1384,131 @@ vector<string> findWords(string &str, vector<string> &dict) {
     return res;
 }
 
+// #149 · Best Time to Buy and Sell Stock
+// Say you have an array for which the ith element is the price of a given stock on day i.
+//   If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+//Input: [3, 2, 3, 1, 2]
+//Output: 1
+//Explanation: You can buy at the third day and then sell it at the 4th day. The profit is 2 - 1 = 1
+/**
+     * @param prices: Given an integer array
+     * @return: Maximum profit
+     */
+int maxProfit_(vector<int> &prices) {
+    // write your code here
+    int n = (int) prices.size(), maxVal = prices[n - 1], maxProfit = 0;
+    std::vector<int> maxStock(n, 0);
+    for (int i = n - 1; i >= 1; --i) {
+        maxVal = std::max(maxVal, prices[i]);
+        maxStock[i] = maxVal;
+    }
+
+    for (int i = 0; i < n - 1; ++i) {
+        maxProfit = std::max(maxProfit, maxStock[i+1] - prices[i]);
+    }
+
+    return maxProfit;
+}
+
+
+// #62 · Search in Rotated Sorted Array - O(logN) time limit
+// Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+// (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+// You are given a target value to search. If found in the array return its index, otherwise return -1.
+// You may assume no duplicate exists in the array.
+int searchRotatedArray(vector<int> &A, int target) {
+    // write your code here
+    if (A.empty()) return -1;
+
+    int n = (int) A.size(), left = 0, right = n - 1, mid = 0;
+
+    while (left + 1 < right) {
+        mid = left + (right - left) / 2;
+
+        if (A[mid] == target) {
+            return mid;
+        } else if (A[mid] > A[left]) {
+            //此时left和mid肯定处在同一个递增数组上
+            //那么就直接运用原始的二分查找
+            if ( (A[left] <= target) && (target < A[mid]) ) {
+                right = mid;
+            } else {
+                left = mid;
+            }
+        } else {
+            //此时mid处于第二个递增数组 left处于第一个递增数组 自然的mid和right肯定处于第二个递增数组上
+            //还是直接运用原始的二分查找思想
+            if ( (A[mid] < target) && (target <= A[right]) ) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+    }
+
+    if (A[left] == target)
+        return left;
+
+    if (A[right] == target)
+        return right;
+
+    return -1;
+}
+
+
+// #183 · Wood Cut
+// Given n pieces of wood with length L[i] (integer array). Cut them into small pieces to guarantee you could have equal or more than k pieces with the same length. What is the longest length you can get from the n pieces of wood? Given L & k, return the maximum length of the small pieces.
+// The unit of length is centimeter.The length of the woods are all positive integers,you couldn't cut wood into float length.If you couldn't get >= k pieces, return 0.
+
+// Input:
+// L = [232, 124, 456]
+// k = 7
+// Output: 114
+// Explanation: We can cut it into 7 pieces if any piece is 114cm long, however we can't cut it into 7 pieces if any piece is 115cm long.
+
+/**
+ * @param L: Given n pieces of wood with length L[i]
+ * @param k: An integer
+ * @return: The maximum length of the small pieces
+ */
+bool woodCut_check (const vector<int> &L, int k, int mid);
+int woodCut(vector<int> &L, int k) {
+    if (L.empty()) return 0;
+
+    int low = 1, high = L.front(), mid = 0;
+    for (auto it : L) {
+        high = std::max(high, it);
+    }
+
+    // Binary search on answer
+    while (low + 1 < high) {
+        mid = low + (high - low) / 2;
+
+        if (woodCut_check(L, k, mid)) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+
+    }
+
+    if (woodCut_check(L, k, high)) {
+        return high;
+    }
+
+    if (woodCut_check(L, k, low)) {
+        return low;
+    }
+
+    return 0;
+}
+bool woodCut_check (const vector<int> &L, int k, int mid) {
+    int num = 0, n = (int) L.size();
+    for (int i = 0; i < n; ++i) {
+        num += L[i] / mid;
+    }
+    return num >= k;
+}
+
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
