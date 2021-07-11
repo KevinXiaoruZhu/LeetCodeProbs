@@ -1203,6 +1203,70 @@ vector<vector<int>> matrixRestoration(int n, int m, vector<vector<int>> &after) 
     return before;
 }
 
+// #406 · Minimum Size Subarray Sum (Compared to #1507 (prefixSum array is not strictly increasing))
+// Given an array of n positive integers and a positive integer s, find the minimal length of a subarray of which the sum ≥ s. If there isn't one, return -1 instead.
+
+// Input: [2,3,1,2,4,3], s = 7
+// Output: 2
+// Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+/**
+ * @param nums: an array of integers
+ * @param s: An integer
+ * @return: an integer representing the minimum size of subarray
+ */
+int minIndex(const vector<int> &prefix, int start, int s);
+int minimumSize(vector<int> &nums, int s) {
+    if (nums.empty()) return -1;
+
+    int n = (int) nums.size(), res = 0x3f3f3f3f;
+
+    vector<int> prefixSum(n+1, 0);
+    for (int i = 1; i <= n; ++i) {
+        prefixSum[i] = nums[i-1] + prefixSum[i-1];
+        // printf("%d\t", prefixSum[i]);
+    }
+    // printf("\n");
+
+    for (int start = 0; start < n; ++start){
+        printf("start: %d\n", start);
+
+        // Binary search the right subarray, because the prefixSum is strictly increasing
+        int idx = minIndex(prefixSum, start, s);
+        if (idx != -1) {
+            printf("return idx: %d\n", idx);
+            res = std::min(res, idx - start + 1);
+        }
+    }
+
+    if (res == 0x3f3f3f3f) return -1;
+
+    return res;
+}
+
+int minIndex(const vector<int>& prefix, const int start, const int s) {
+    int n = (int)prefix.size() - 1, left = start, right = n - 1, mid = 0;
+
+    while (left + 1 < right) {
+        mid = left + (right - left) / 2;
+        // printf("mid index: %d\n", mid);
+        if(prefix[mid + 1] - prefix[start] == s) {
+            return mid;
+        } else if (prefix[mid + 1] - prefix[start] > s) {
+            right = mid;
+        } else {
+            left = mid;
+        }
+    }
+
+    if(prefix[left + 1] - prefix[start] >= s)
+        return left;
+
+    if(prefix[right + 1] - prefix[start] >= s)
+        return right;
+
+    return -1;
+}
+
 // #Lint1507 hard
 /**
  * @param A: the array
@@ -1214,7 +1278,7 @@ static int shortestSubarray(vector<int> &A, int K) {
     vector<int> prefixSum = getPrefixSum(A);
     int start = 1, mid, end = (int) A.size();
 
-    // 二分答案
+    // 二分答案 binary search on answer
     while(start + 1 < end) {
         mid = start + (end - start)/2;
         if (shortestSubarray_isValid(prefixSum, K, mid)) {
@@ -1510,5 +1574,47 @@ bool woodCut_check (const vector<int> &L, int k, int mid) {
     }
     return num >= k;
 }
+
+// #1310 · Product of Array Except Self
+// Given an array of n integers where n > 1, nums, return an array output such that output[i] is equal to the product of all the elements of nums except nums[i].
+
+// Input: [1,2,3,4]
+// Output: [24,12,8,6]
+// Explanation:
+//  2*3*4=24
+//  1*3*4=12
+//  1*2*4=8
+//  1*2*3=6
+
+// Challenge
+//   Could you solve it with constant space complexity? (Note: The output array does not count as extra space for the purpose of space complexity analysis.)
+/**
+ * @param nums: an array of integers
+ * @return: the product of all the elements of nums except nums[i].
+ */
+vector<int> productExceptSelf(vector<int> &nums) {
+    if (nums.empty()) return {};
+
+    int n = (int) nums.size();
+    vector<int> res(n, 1);
+
+    int product = 1;
+
+    // constant space solution
+    for (int i = 1; i < n; ++i) {
+        product *= nums[i-1];
+        res[i] *= product;
+    }
+
+    product = 1;
+    for (int i = n - 2; i >= 0; --i) {
+        product *= nums[i+1];
+        res[i] *= product;
+    }
+
+    return res;
+}
+
+
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H

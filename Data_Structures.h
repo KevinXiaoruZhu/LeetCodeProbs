@@ -351,7 +351,8 @@ public:
     }
 
 private:
-    // pair.first: index in original array; pair.second: value in original array
+    // pair.first: index of original array;
+    // pair.second: value in original array.
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(cmp) > *minHeap;
     // int: index in original array
     std::unordered_set<int> *deleteSet;
