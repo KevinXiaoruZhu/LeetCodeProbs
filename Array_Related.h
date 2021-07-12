@@ -1127,6 +1127,8 @@ static vector<int> getPrefixSum(const vector<int>& nums){
     return prefix_sum;
 }
 
+// Prefix Sum Related
+
 // #Lint1844 mid
 /**
 * @param nums: a list of integer
@@ -1242,7 +1244,6 @@ int minimumSize(vector<int> &nums, int s) {
 
     return res;
 }
-
 int minIndex(const vector<int>& prefix, const int start, const int s) {
     int n = (int)prefix.size() - 1, left = start, right = n - 1, mid = 0;
 
@@ -1349,7 +1350,6 @@ double findMaxAverage(vector<int>& nums, int k) {
     }
     return low;
 }
-
 bool findMaxAverage_canFind(const vector<int> &nums, int k, double avg) {
     int n = (int) nums.size();
     double rightSum = 0, leftSum = 0, minLeftSum = 0;
@@ -1615,6 +1615,92 @@ vector<int> productExceptSelf(vector<int> &nums) {
     return res;
 }
 
+// Two Pointer Related
 
+// #406 · Minimum Size Subarray Sum
+// Given an array of n positive integers and a positive integer s, find the minimal length of a subarray of which the sum ≥ s. If there isn't one, return -1 instead.
+//   Input: [2,3,1,2,4,3], s = 7
+//   Output: 2
+//   Explanation: The subarray [4,3] has the minimal length under the problem constraint.
+/**
+* @param nums: an array of integers
+* @param s: An integer
+* @return: an integer representing the minimum size of subarray
+*/
+int minimumSize_two_pointer(vector<int> &nums, int s) {
+
+    if (nums.empty()) return -1;
+
+    int n = (int) nums.size(), right = 0, sumOfSubarray = 0, res = 0x3f3f3f3f;
+    for (int left = 0; left < n; ++left) {
+        while (right < n && sumOfSubarray < s) {
+            sumOfSubarray += nums[right];
+            ++right;
+        }
+
+        if (sumOfSubarray >= s) {
+            res = std::min(res, right - left);
+        }
+
+        sumOfSubarray -= nums[left];
+    }
+
+    if (res == 0x3f3f3f3f) {
+        return -1;
+    }
+
+    return res;
+
+}
+
+
+// #1375 · Substring With At Least K Distinct Characters
+// Given a string S with only lowercase characters.
+// Return the number of substrings that contains at least k distinct characters.
+//   10 <= length(S) <= 1,000,000
+//   1 <= k <= 26, 1 <= k <= 26
+
+// Input: S = "abcabcabcabc", k = 3
+// Output: 55
+// Explanation: Any substring whose length is not smaller than 3 contains a, b, c.
+//     For example, there are 10 substrings whose length are 3, "abc", "bca", "cab" ... "abc"
+//     There are 9 substrings whose length are 4, "abca", "bcab", "cabc" ... "cabc"
+//     ...
+//     There is 1 substring whose length is 12, "abcabcabcabc"
+//     So the answer is 1 + 2 + ... + 10 = 55.
+
+/**
+ * @param s: a string
+ * @param k: an integer
+ * @return: the number of substrings there are that contain at least k distinct characters
+ */
+long long kDistinctCharacters(string &s, int k) {
+    if (s.empty()) return 0;
+
+    int n = (int) s.size(), diff = 0, right = 0;
+    long long res = 0;
+    std::unordered_map<char, int> char2num;
+
+    for (int left = 0; left < n; ++left) {
+
+        while (right < n && diff < k) {
+            if (!char2num.count(s[right])) // if not exist, init 0
+                char2num[s[right]] = 0;
+
+            ++char2num[s[right]];
+            if (char2num[s[right]] == 1) // char s[right] is new here
+                ++diff;
+
+            ++right;
+        }
+        if (diff == k)
+            res += n - (right -1); // length from (right-1) to n  -- [right-1, n]
+
+        if ((char2num[s[left]]--) == 1) // remove the most left char before the next iteration
+            --diff;
+    }
+
+    return res;
+}
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
