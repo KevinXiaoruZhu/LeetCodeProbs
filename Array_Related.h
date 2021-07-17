@@ -759,6 +759,7 @@ static void rotate(vector<vector<int>> & matrix){
 static vector<vector<int>> merge_intervals(vector<vector<int>>& intervals) {
     if (intervals.empty()) return {};
 
+    // std::function<bool(const vector<int>& a, const vector<int>& b)> f =  [](const vector<int>& a, const vector<int>& b) -> bool { return a[0] < b[0]; };
     auto cmp = [](const vector<int>& a, const vector<int>& b) -> bool { return a[0] < b[0]; };
     std::sort(intervals.begin(), intervals.end(), cmp);
 
@@ -1702,5 +1703,73 @@ long long kDistinctCharacters(string &s, int k) {
 
     return res;
 }
+
+
+// #32 · Minimum Window Substring
+// Given two strings source and target. Return the minimum substring of source which contains each char of target.
+//    If there is no answer, return "".
+//    You are guaranteed that the answer is unique.
+//    target may contain duplicate char, while the answer need to contain at least the same number of that char.
+
+// Example
+// Input:
+//   source = "abc"
+//   target = "ac"
+// Output:
+//   "abc"
+// Explanation:
+//   "abc" is the minimum substring of source string which contains each char of target "ac".
+string minWindow(string &source , string &target) {
+    if(source.empty() || target.empty()) return "";
+
+    std::unordered_map<char, int> targetChar2Num, sourceChar2Num;
+    int n = (int) source.size(), m = (int) target.size(), j = 0, resLen = 0x3f3f3f3f, resStart = 0;;
+    // std::pair<int, int> resPair(0, 0);
+    int count = 0;
+
+    for (int i = 0; i < m; ++i) {
+        if (!targetChar2Num.count(target[i]))
+            targetChar2Num[target[i]] = 0;
+
+        ++targetChar2Num[target[i]];
+    }
+
+    for (int i = 0; i < n; ++i) {
+
+        while(j < n && count < m) {
+
+            if (!sourceChar2Num.count(source[j]))
+                sourceChar2Num[source[j]] = 0;
+
+            ++sourceChar2Num[source[j]];
+
+            if(targetChar2Num.count(source[j]) && sourceChar2Num[source[j]] <= targetChar2Num[source[j]])
+                ++count;
+
+            ++j;
+        }
+
+        if (count == m && (j-i) < resLen) {
+            resLen = j - i;
+            resStart = i;
+            // resPair.first = i;
+            // resPair.second = j;
+        }
+
+        --sourceChar2Num[source[i]];
+        if (targetChar2Num.count(source[i]) && sourceChar2Num[source[i]] < targetChar2Num[source[i]])
+            --count;
+    }
+
+    if (resLen == 0x3f3f3f3f)
+        return "";
+
+    // return source.substr(resPair.first, resPair.second - resPair.first);
+    return source.substr(resStart, resLen);
+}
+
+
+// #1219 · Heaters
+
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
