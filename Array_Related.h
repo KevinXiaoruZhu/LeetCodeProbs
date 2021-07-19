@@ -1769,7 +1769,139 @@ string minWindow(string &source , string &target) {
 }
 
 
-// #1219 · Heaters
+// #1219 · Heaters (Google - hard)
+// Input: [1,2,3,4],[1,4]
+// Output: 1
+// Explanation: The two heater was placed in the position 1 and 4. We need to use radius 1 standard, then all the houses can be warmed.
+/**
+ * @param houses: positions of houses
+ * @param heaters: positions of heaters
+ * @return: the minimum radius standard of heaters
+ */
 
+// Solution I: binary search + double pointers
+bool findRadius_check(int rds, const vector<int> &houses, const vector<int> &heaters);
+int findRadius(vector<int> &houses, vector<int> &heaters) {
+    // if (houses.empty() || heaters.empty()) return -1;
+    auto cmp = [](const int a, const int b) -> bool{return a < b;};
+    std::sort(houses.begin(), houses.end(), cmp);
+    std::sort(heaters.begin(), heaters.end(), cmp);
+
+    int n = (int)houses.size(), m = (int)heaters.size(), left = 0, right = std::max(houses[n-1], heaters[m-1]), mid = 0;
+
+    while (left + 1 < right) {
+        mid = left + (right - left) / 2;
+
+        if (findRadius_check(mid, houses, heaters)) {
+            right = mid;
+        } else {
+            left = mid;
+        }
+
+    }
+
+    if (findRadius_check(left, houses, heaters))
+        return left;
+
+    // if (findRadius_check(right, houses, heaters))
+        // return right;
+
+    return right;
+}
+bool findRadius_check(int rds, const vector<int> &houses, const vector<int> &heaters) {
+    int i = 0, j = 0, n = (int)houses.size(), m = (int)heaters.size();
+
+    while (i < n && j < m) {
+        // if (abs(houses[i] - heaters[j]) <= rds) {
+        if ( heaters[j] - rds <= houses[i] && houses[i] <= heaters[j] + rds) {
+            ++i;
+        } else {
+            ++j;
+        }
+    }
+
+    if (j == m)
+        return false;
+
+    return i == n;
+}
+
+// Solution II: double pointers without binary search
+//  Notes: based on heaters, finding the correct position for each house
+//  注解：以heaters为轴，利用同向双指针往上顺次填houses，期间打擂台求max半径，即为最小值
+int findRadius_II(vector<int> &houses, vector<int> &heaters) {
+
+    auto cmp = [](const int a, const int b) -> bool{return a < b;};
+    std::sort(houses.begin(), houses.end(), cmp);
+    std::sort(heaters.begin(), heaters.end(), cmp);
+
+
+    int n = (int)houses.size(), m = (int)heaters.size(), i = 0, j = 0;
+    int res = INT_MIN, currRds = 0, nextRds = 0;
+
+    while (i < n && j < m) {
+        currRds = std::abs(heaters[j] - houses[i]);
+        nextRds = INT_MAX;
+        if (j < m - 1)
+            nextRds = std::abs(heaters[j+1] - houses[i]);
+
+        if (currRds < nextRds) { // using <= will not pass test cases
+            res = std::max(res, currRds);
+            // res = res > prevRds ? res : prevRds;
+            ++i;
+        } else {
+            ++j;
+        }
+    }
+
+    return res;
+}
+
+
+// #1850 · Pick Apples
+
+// Input:
+//   A = [6, 1, 4, 6, 3, 2, 7, 4]
+//   K = 3
+//   L = 2
+// Output:
+//   24
+// Explanation:
+//   because Alice can choose tree 3 to 5 and collect 4 + 6 + 3 = 13 apples, and Bob can choose trees 7 to 8 and collect 7 + 4 = 11 apples.Thus, they will collect 13 + 11 = 24.
+
+/**
+ * @param A: a list of integer
+ * @param K: a integer
+ * @param L: a integer
+ * @return: return the maximum number of apples that they can collect. (-1 when there is no answer)
+ */
+
+// 因为互相不干涉，所以考虑隔板法，分割成左右两部分
+// max(max(左窗口sum) + 当前右窗口sum) 即为结果
+// 需要考虑左边K，右边L和左边L，右边K
+int PickApples(vector<int> &A, int K, int L) {
+    int n = (int) A.size(), leftMax = 0, res = -1;
+    if (A.empty() || K + L > n) return -1;
+
+    vector<int> prefix = getPrefixSum(A);
+
+    // K left, L right
+    for (int i = K; i <= n - L; ++i) {
+        // #i is included in the L, not in K
+        //  K range: [i-K, i)
+        //  L range: [i, i+L)
+        leftMax = std::max(leftMax, prefix[i]-prefix[i-K]);
+        res = std::max(res, leftMax + prefix[i+L]-prefix[i]);
+    }
+
+    // L left, K right
+    leftMax = 0;
+    for (int i = L; i <= n - K; ++i) {
+        leftMax = std::max(leftMax, prefix[i]-prefix[i-L]);
+        res = std::max(res, leftMax + prefix[i+K]-prefix[i]);
+    }
+
+    return res;
+}
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
