@@ -1904,4 +1904,95 @@ int PickApples(vector<int> &A, int K, int L) {
     return res;
 }
 
+
+// #1849 · Grumpy Bookstore Owner
+//Input:
+//  [1,0,1,2,1,1,7,5]
+//  [0,1,0,1,0,1,0,1]
+//  3
+//Output:
+//  16
+//Explanation:
+//  The bookstore owner keeps themselves not grumpy for the last 3 days.
+//  The maximum number of customers that can be satisfied = 1 + 1 + 1 + 1 + 7 + 5 = 16.
+/**
+ * @param customers: the number of customers
+ * @param grumpy: the owner's temper every day
+ * @param X: X days
+ * @return: calc the max satisfied customers
+ */
+int maxSatisfied(vector<int> &customers, vector<int> &grumpy, int X) {
+
+    int n = (int) customers.size(), res = 0;
+    std::vector<int> prefix(n+1, 0), prefixTemper(n+1, 0);
+
+    for (int i = 0; i < n; ++i) {
+        prefix[i+1] = prefix[i] + customers[i];
+
+        int tmp = (grumpy[i] == 0) ? customers[i] : 0;
+        prefixTemper[i+1] = prefixTemper[i] + tmp;
+    }
+
+    // if (n == X) {
+    //     return prefix[n] - prefix[0];
+    // }
+
+    for (int i = 0; i <= n - X; ++i) {
+        res = std::max(res, prefixTemper[i] - prefixTemper[0] + prefix[i+X] - prefix[i] + prefixTemper[n] - prefixTemper[i+X]);
+    }
+
+    return res;
+}
+
+// #404 · Subarray Sum II
+// Given an positive integer array A and an interval.
+// Return the number of subarrays whose sum is in the range of given interval.
+
+// Input: A = [1, 2, 3, 4], start = 1, end = 3
+// Output: 4
+// Explanation: All possible subarrays: [1](sum = 1), [1, 2](sum = 3), [2](sum = 2), [3](sum = 3).
+
+// Input: A = [1, 2, 3, 4], start = 1, end = 100
+// Output: 10
+// Explanation: Any subarray is ok.
+
+/**
+ * @param A: An integer array
+ * @param start: An integer
+ * @param end: An integer
+ * @return: the number of possible answer
+ */
+int subarraySumII(vector<int> &A, int start, int end) {
+
+    if (start > end || A.empty()) return 0;
+
+    int n = (int) A.size(), j = 0, k = 0;
+    vector<int> prefix (n+1, 0);
+    int res = 0;
+
+    for (int i = 0; i < n; ++i) {
+        prefix[i+1] = prefix[i] + A[i];
+    }
+
+    // i为左端点, j和k为右端点
+    // 也可以考虑j和k为左端点，i为右端点 i from 1 to n:
+    //     while(j < i && prefix[i] - prefix[j] > end) ++j;
+    //     while(k < i && prefix[i] - prefix[k] >= start) ++k;
+    for (int i = 0; i < n; ++i) {
+
+        while (j < n && prefix[j+1] - prefix[i] < start)
+            ++j;
+
+        while (k < n && prefix[k+1] - prefix[i] <= end)
+            ++k;
+
+        // 必须保证i在j,k的左边才算有效
+        if (i <= j)
+            res += (k - 1) - j + 1;
+    }
+
+    return res;
+}
+
+
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
