@@ -69,7 +69,7 @@ Output: false
 // 1. P[i][j] = P[i - 1][j - 1], if p[j - 1] != '*' && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
 // 2. P[i][j] = P[i][j - 2], if p[j - 1] == '*' and the pattern repeats for 0 times;
 // 3. P[i][j] = P[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'), if p[j - 1] == '*' and the pattern repeats for at least 1 times.
-static bool isMatch(string s, string p) {
+static bool isMatch_dp(string s, string p) {
     int m = (int)s.size(), n = (int)p.size();
     vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
     dp[0][0] = true;
@@ -114,7 +114,7 @@ static bool isMatchWild(string s, string p) {
  * Iterate over all "inner" cells: d[col][row] = d[col - 1][row] + d[col][row - 1].
  * Return d[m - 1][n - 1]
  **/
-static int uniquePaths(int m, int n) {
+static int uniquePaths_dp(int m, int n) {
     int dp[n];
     for (int i = 0; i < n; ++i) dp[i] = 1;
     for (int i = 1; i < m; ++i) {
@@ -154,4 +154,30 @@ static int maximalRectangle(vector<vector<char>>& matrix) {
 }
 
 
+// LintCode below
+
+// 151 · Best Time to Buy and Sell Stock III
+int maxProfitIII_1(vector<int> &prices) {
+    // write your code here
+    if (prices.empty()) return 0;
+
+    int n = (int) prices.size(), buy = prices[0];
+    int sell = prices[n - 1], best = 0;
+    std::vector<int> profits(n, 0);
+
+    // record the best profits with only 1 transaction
+    for(int i = 1; i < n; ++i) {
+        profits[i] = std::max(profits[i-1], prices[i] - buy);
+        buy = std::min(buy, prices[i]);
+        // printf( "profits[%d] = %d, buy = %d\n", i, profits[i], buy);
+    }
+
+    // i = 0 之前是两次交易，i = 0是单次交易的最优值(此时profits[i] = 0)，同时在best中打擂台
+    for(int i = n - 2; i >= 0; --i) {
+        best = std::max(best, sell - prices[i] + profits[i]);
+        sell = std::max(sell, prices[i]);
+    }
+
+    return best;
+}
 #endif //LEETCODEPROBS_DYNAMIC_PROGRAMMING_H

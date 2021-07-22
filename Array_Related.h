@@ -1994,5 +1994,102 @@ int subarraySumII(vector<int> &A, int start, int end) {
     return res;
 }
 
+// #1879 · Two Sum VII
+// Given an array of integers that is already sorted in ascending absolute order, find two numbers so that the sum of them equals a specific number.
+// The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Note: the subscript of the array starts with 0
+// You are not allowed to sort this array.
+
+// Input:
+//   [0,-1,2,-3,4]
+//   1
+// Output:
+//   [[1,2],[3,4]]
+// Explanation:
+//   nums[1] + nums[2] = -1 + 2 = 1, nums[3] + nums[4] = -3 + 4 = 1
+//   You can return [[3,4],[1,2]], the system will automatically help you sort it to [[1,2],[3,4]]. But [[2,1],[3,4]] is invaild.
+/**
+ * @param nums: the input array
+ * @param target: the target number
+ * @return: return the target pair
+ */
+int getNextLeft(vector<int> &nums, int left);
+int getNextRight(vector<int> &nums, int right);
+vector<vector<int>> twoSumVII(vector<int> &nums, int target) {
+    int left = 0, right = 0;
+    vector<vector<int>> res;
+
+    for (int i = 1; i < nums.size(); ++i) {
+        right = nums[i] > nums[right] ? i : right;
+        left = nums[i] < nums[left] ? i : left;
+    }
+
+    while (nums[left] < nums[right]) {
+        if (nums[left] + nums[right] > target) {
+            right = getNextRight(nums, right);
+            if (right == -1)
+                break;
+        } else if (nums[left] + nums[right] < target) {
+            left = getNextLeft(nums, left);
+            if (left == -1)
+                break;
+        } else { // nums[left] + nums[right] == target
+            vector<int> temp {left, right};
+            if (left > right)
+                swap(temp[0], temp[1]);
+            res.push_back(temp);
+
+            // left 或 right 要前進，否則會無窮迴圈
+            left = getNextLeft(nums, left);
+            if (left == -1)
+                break;
+        }
+    }
+    return res;
+}
+int getNextLeft(vector<int> &nums, int left) {
+    if (nums[left] < 0) {
+        for (int i = left - 1; i >= 0; i--) {
+            if (nums[i] < 0) {
+                return i;
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] >= 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    for (int i = left + 1; i < nums.size(); i++) {
+        if (nums[i] >= 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+int getNextRight(vector<int> &nums, int right) {
+    if (nums[right] > 0) {
+        for (int i = right - 1; i >= 0; i--) {
+            if (nums[i] > 0) {
+                return i;
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] <= 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    for (int i = right + 1; i < nums.size(); i++) {
+        if (nums[i] <= 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+
 
 #endif //ALGORITHMPRACTICE_ARRAY_RELATED_H
