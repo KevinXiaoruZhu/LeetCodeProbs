@@ -1994,7 +1994,7 @@ int subarraySumII(vector<int> &A, int start, int end) {
     return res;
 }
 
-// #1879 · Two Sum VII
+// #1879 · Two Sum VII - hard with O(1) space + O(n) time
 // Given an array of integers that is already sorted in ascending absolute order, find two numbers so that the sum of them equals a specific number.
 // The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Note: the subscript of the array starts with 0
 // You are not allowed to sort this array.
@@ -2007,13 +2007,18 @@ int subarraySumII(vector<int> &A, int start, int end) {
 // Explanation:
 //   nums[1] + nums[2] = -1 + 2 = 1, nums[3] + nums[4] = -3 + 4 = 1
 //   You can return [[3,4],[1,2]], the system will automatically help you sort it to [[1,2],[3,4]]. But [[2,1],[3,4]] is invaild.
+
+// If space complexity are allowed with O(n), we could consider a hashmap to record the {target-nums[index], index} kv-pairs,
+//  and we iterate the nums array to find the right answers.
+
+// Challenge: O(n) time complexity and O(1) extra space.
 /**
  * @param nums: the input array
  * @param target: the target number
  * @return: return the target pair
  */
-int getNextLeft(vector<int> &nums, int left);
-int getNextRight(vector<int> &nums, int right);
+int nextLeft(vector<int> &nums, int left);
+int nextRight(vector<int> &nums, int right);
 vector<vector<int>> twoSumVII(vector<int> &nums, int target) {
     int left = 0, right = 0;
     vector<vector<int>> res;
@@ -2025,11 +2030,11 @@ vector<vector<int>> twoSumVII(vector<int> &nums, int target) {
 
     while (nums[left] < nums[right]) {
         if (nums[left] + nums[right] > target) {
-            right = getNextRight(nums, right);
+            right = nextRight(nums, right);
             if (right == -1)
                 break;
         } else if (nums[left] + nums[right] < target) {
-            left = getNextLeft(nums, left);
+            left = nextLeft(nums, left);
             if (left == -1)
                 break;
         } else { // nums[left] + nums[right] == target
@@ -2038,57 +2043,142 @@ vector<vector<int>> twoSumVII(vector<int> &nums, int target) {
                 swap(temp[0], temp[1]);
             res.push_back(temp);
 
-            // left 或 right 要前進，否則會無窮迴圈
-            left = getNextLeft(nums, left);
+            // left or right must move forward, otherwise it causes infinite loop
+            left = nextLeft(nums, left);
             if (left == -1)
                 break;
         }
     }
     return res;
 }
-int getNextLeft(vector<int> &nums, int left) {
+int nextLeft(vector<int> &nums, int left) {
     if (nums[left] < 0) {
         for (int i = left - 1; i >= 0; i--) {
-            if (nums[i] < 0) {
+            if (nums[i] < 0)
                 return i;
-            }
         }
         for (int i = 0; i < nums.size(); i++) {
-            if (nums[i] >= 0) {
+            if (nums[i] >= 0)
                 return i;
-            }
         }
         return -1;
     }
     for (int i = left + 1; i < nums.size(); i++) {
-        if (nums[i] >= 0) {
+        if (nums[i] >= 0)
             return i;
-        }
     }
     return -1;
 }
-int getNextRight(vector<int> &nums, int right) {
+int nextRight(vector<int> &nums, int right) {
     if (nums[right] > 0) {
         for (int i = right - 1; i >= 0; i--) {
-            if (nums[i] > 0) {
+            if (nums[i] > 0)
                 return i;
-            }
         }
         for (int i = 0; i < nums.size(); i++) {
-            if (nums[i] <= 0) {
+            if (nums[i] <= 0)
                 return i;
-            }
         }
         return -1;
     }
     for (int i = right + 1; i < nums.size(); i++) {
-        if (nums[i] <= 0) {
+        if (nums[i] <= 0)
             return i;
-        }
     }
     return -1;
 }
 
+
+// #390 · Find Peak Element II - O(m*log(n))
+// Given an integer matrix A which has the following features :
+// - The numbers in adjacent positions are different.
+// - The matrix has n rows and m columns, n and m will not less than 3.
+// - For all i < n, A[i][0] < A[i][1] && A[i][m - 2] > A[i][m - 1].
+// - For all j < m, A[0][j] < A[1][j] && A[n - 2][j] > A[n - 1][j]
+
+// We define a position [i, j] is a peak if:
+//   A[i][j] > A[i + 1][j] && A[i][j] > A[i - 1][j] &&
+//   A[i][j] > A[i][j + 1] && A[i][j] > A[i][j - 1]
+
+// Find a peak element in this matrix. Return the index of the peak.
+// Note: guarantee that there is at least one peak, and if there are multiple peaks, return any one of them.
+/**
+ * @param A: An integer matrix
+ * @return: The index of the peak
+ */
+int findColIdx(int row, vector<vector<int>> &A);
+vector<int> findPeakII(vector<vector<int>> &A) {
+    // write your code here
+    if (A.empty() || A[0].empty()) return {};
+    int n = (int) A.size(), m = (int) A[0].size(), start = 1, end = n - 2, mid = -1, col = -1;
+    std::vector<int> res = {};
+    // we can use binary search here because of the last two features above.
+    // if we find the mid value is less than mid+1 value, we can confirm there must be a peak on the right side of mid,
+    //   and vice versa.
+    while (start <= end) {
+        mid = start + (end - start) / 2;
+        col = findColIdx(mid, A);
+
+        if (A[mid][col] < A[mid+1][col]) {
+            start = mid + 1;
+        } else if (A[mid][col] < A[mid-1][col]) {
+            end = mid - 1;
+        } else {
+            res.emplace_back(mid);
+            res.emplace_back(col);
+            return res;
+        }
+    }
+    return res;
+
+    // col = findColIdx(start, A);
+    // if (A[start][col] > A[start+1][col] && A[start][col] > A[start-1][col]) {
+    //     res.emplace_back(start);
+    //     res.emplace_back(col);
+    //     return res;
+    // }
+
+    // col = findColIdx(end, A);
+    // if (A[end][col] > A[end+1][col] && A[end][col] > A[end-1][col]) {
+    //     res.emplace_back(end);
+    //     res.emplace_back(col);
+    //     return res;
+    // }
+}
+
+int findColIdx(const int row, const vector<vector<int>> &A) {
+    int n = (int) A[row].size(), col = 0;
+    for (int i = 0; i < n; ++i) {
+        if (A[row][i] > A[row][col])
+            col = i;
+    }
+    return col;
+}
+
+// #384 · Longest Substring Without Repeating Characters
+// Given a string, find the length of the longest substring without repeating characters.
+/**
+ * @param s: a string
+ * @return: an integer
+ */
+int lengthOfLongestSubstring(string &s) {
+    int n = (int) s.size(), r = 0, res = 0;
+    std::unordered_map<char, int> char2Count;
+    for (int l = 0; l < n; ++l) {
+        while(r < n && (!char2Count.count(s[r]) || char2Count[s[r]] == 0)) {
+            if (!char2Count.count(s[r]))
+                char2Count[s[r]] = 0;
+            ++char2Count[s[r]];
+            ++r;
+        }
+
+        res = std::max(res, r - 1 - l + 1);
+
+        --char2Count[s[l]];
+    }
+
+    return res;
+}
 
 
 
