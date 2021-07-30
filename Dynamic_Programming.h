@@ -154,7 +154,7 @@ static int maximalRectangle(vector<vector<char>>& matrix) {
 }
 
 
-// LintCode below
+/* LintSolutionDP */
 
 // 151 · Best Time to Buy and Sell Stock III
 int maxProfitIII_1(vector<int> &prices) {

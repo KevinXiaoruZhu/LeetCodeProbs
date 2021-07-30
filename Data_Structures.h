@@ -366,5 +366,35 @@ private:
     }
 };
 
+// BFS Template
+std::vector<int> findNext_(const int curr) {
+    return {};
+}
+bool isValid_(const int val) {
+    return false;
+}
+void bfsTemplate() {
+    std::queue<int, std::vector<int>> q;
+    // std::unordered_set<int> visited;
+    std::unordered_map<int, int> distance;
+    q.push(0);
+    // visited.insert(0);
+    distance.insert(0, 0);
+
+    while(!q.empty()) {
+        int now = q.front(); q.pop();
+        for(int next : findNext_(now)) {
+            if (!isValid_(next))
+                continue;
+
+            q.push(next);
+            // 更新visited/distance的操作应该放在入队列时个位置
+            // 如果放在出队列处会导致重复入队，降低效率
+            distance.insert(next, distance[next]+1);
+            // visited.insert(next);
+        }
+    }
+}
+
 
 #endif //ALGORITHMPRACTICE_DATA_STRUCTURES_H

@@ -2162,6 +2162,8 @@ int findColIdx(const int row, const vector<vector<int>> &A) {
  * @return: an integer
  */
 int lengthOfLongestSubstring(string &s) {
+    if (s.empty()) return 0;
+
     int n = (int) s.size(), r = 0, res = 0;
     std::unordered_map<char, int> char2Count;
     for (int l = 0; l < n; ++l) {

@@ -147,4 +147,76 @@ static vector<vector<string>> findLaddersII(string beginWord, string endWord, ve
     dict.erase(beginWord); dict.erase(endWord);
 }
 
+
+/* LintSolutionBFS */
+
+
+// #433 · Number of Islands
+
+// Given a boolean 2D matrix, 0 is represented as the sea, 1 is represented as the island. If two 1 is adjacent, we consider them in the same island. We only consider up/down/left/right adjacent.
+//Find the number of islands.
+
+/**
+ * @param grid: a boolean 2D matrix
+ * @return: an integer
+ */
+bool islandsIsValid(int x, int y, const vector<vector<bool>> &grid, const unordered_set<int> &visited);
+void islandsBfs(const vector<vector<bool>> &grid, int x, int y, unordered_set<int> &visited);
+int numIslands(vector<vector<bool>> &grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+
+    int res = 0, n = (int) grid.size(), m = (int) grid[0].size();
+    unordered_set<int> visited;
+    for(int i = 0; i < n; ++i)
+        for(int j = 0; j < m; ++j){
+            if(!visited.count(i * m + j) && grid[i][j]){
+                islandsBfs(grid, i, j, visited);
+                ++res;
+            }
+        }
+
+    return res;
+}
+void islandsBfs(const vector<vector<bool>> &grid, int x, int y, unordered_set<int> &visited) {
+    if(!grid[x][y])
+        return;
+
+    int n = (int) grid.size(), m = (int) grid[0].size();
+    vector<int> dx = {-1, 1, 0, 0};
+    vector<int> dy = {0, 0, -1, 1};
+
+    queue<int> q;
+    q.push(x * m + y);
+    visited.insert(x * m + y);
+
+    while (!q.empty()) {
+        int curr = q.front(); q.pop();
+        int curr_x = curr / m;
+        int curr_y = curr % m;
+
+        for (int i = 0; i < 4; ++i) {
+            int next_x = curr_x + dx[i];
+            int next_y = curr_y + dy[i];
+
+            if(islandsIsValid(next_x, next_y, grid, visited)) {
+                q.push(next_x * m + next_y);
+                visited.insert(next_x * m + next_y);
+            }
+        }
+    }
+}
+bool islandsIsValid(int x, int y, const vector<vector<bool>> &grid, const unordered_set<int> &visited) {
+    int n = (int) grid.size(), m = (int) grid[0].size();
+    if (x < 0 || y < 0 || x >= n || y >= m)
+        return false;
+
+    if (!grid[x][y])
+        return false;
+
+    if (visited.count(x * m + y))
+        return false;
+
+    return true;
+}
+
 #endif //LEETCODEPROBS_TRAVERSAL_H
