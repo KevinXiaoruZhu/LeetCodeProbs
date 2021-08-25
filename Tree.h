@@ -31,7 +31,7 @@ struct TreeNode {
 
 
 // #105 Construct Binary Tree from Inorder and Preoder Traversal
-// Note: The pre order traverse must visit the root of tree first, and left subtree then right subtree
+// Note: The pre-order traverse must visit the root of tree first, and left subtree then right subtree
 //       The in order traverse must visit the left subtree first, and root then
 TreeNode* buildTreeHelper(const vector<int>& preorder, int pLeft, int pRight, const vector<int>& inorder, int iLeft, int iRight){
     if (pLeft > pRight || iLeft > iRight) return nullptr;
