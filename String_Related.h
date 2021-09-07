@@ -118,7 +118,7 @@ Explanation:
 P     I    N
 A   L S  I G
 Y A   H R
-P     I
+P         I
 */
 static string convert(string s, int numRows) {
     if (numRows <= 1) return s;
